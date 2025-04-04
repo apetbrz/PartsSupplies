@@ -1,6 +1,8 @@
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.stream.Stream;
 
 public class ApplicationFunctions {
     
@@ -13,8 +15,6 @@ public class ApplicationFunctions {
         while(result.next()){
             System.out.println(String.format("%-10s %-30s %-30s", result.getString(1), result.getString(2), result.getString(3)));
         }
-
-        return result;
     };
     public static SQLFunction listSuppliers = (conn, input) -> {
         Statement st = conn.createStatement();
@@ -25,8 +25,6 @@ public class ApplicationFunctions {
         while(result.next()){
             System.out.println(String.format("%-10s %-30s %-15s", result.getString(1), result.getString(2), result.getString(3)));
         }
-
-        return result;
     };
     public static SQLFunction listCatalogEntries = (conn, input) -> {
         Statement st = conn.createStatement();
@@ -37,8 +35,6 @@ public class ApplicationFunctions {
         while(result.next()){
             System.out.println(String.format("%-10s %-10s %10.2f", result.getString(1), result.getString(2), result.getFloat(3)));
         }
-
-        return result;
     };
 
     public static SQLFunction addPart = (conn, input) -> {
@@ -55,7 +51,7 @@ public class ApplicationFunctions {
             UI.subprompt(Lang.ENTER_PID);
             pid = input.nextLine().toUpperCase();
 
-            if(pid.equals("!")) return null;
+            if(pid.equals("!")) return;
             if(st.executeQuery(SQLQueries.selectFromWhereColEqVal("pid", "parts", "pid", pid)).next()){
                 System.out.println(Lang.PID_EXISTS);
                 continue;
@@ -66,14 +62,14 @@ public class ApplicationFunctions {
             UI.subprompt(Lang.ENTER_PNAME);
             pname = input.nextLine();
 
-            if(pname.equals("!")) return null;
+            if(pname.equals("!")) return;
             if(pname.length() > 0) break;
         }
         while(true){
             UI.subprompt(Lang.ENTER_PMANF);
             pmanf = input.nextLine();
 
-            if(pmanf.equals("!")) return null;
+            if(pmanf.equals("!")) return;
             if(pmanf.length() > 0) break;
         }
 
@@ -81,8 +77,6 @@ public class ApplicationFunctions {
 
         if(result < 1) System.out.println(Lang.INSERTION_FAILED);
         else System.out.println(Lang.INSERTION_SUCCESS);
-
-        return null;
     };
     public static SQLFunction addSupplier = (conn, input) -> {
         
@@ -98,7 +92,7 @@ public class ApplicationFunctions {
             UI.subprompt(Lang.ENTER_SID);
             sid = input.nextLine().toUpperCase();
 
-            if(sid.equals("!")) return null;
+            if(sid.equals("!")) return;
             if(st.executeQuery(SQLQueries.selectFromWhereColEqVal("sid", "parts", "sid", sid)).next()){
                 System.out.println(Lang.SID_EXISTS);
                 continue;
@@ -109,14 +103,14 @@ public class ApplicationFunctions {
             UI.subprompt(Lang.ENTER_SNAME);
             sname = input.nextLine();
 
-            if(sname.equals("!")) return null;
+            if(sname.equals("!")) return;
             if(sname.length() > 0) break;
         }
         while(true){
             UI.subprompt(Lang.ENTER_SPHONE);
             sphone = input.nextLine();
 
-            if(sphone.equals("!")) return null;
+            if(sphone.equals("!")) return;
             if(sphone.length() > 0) break;
         }
 
@@ -124,8 +118,6 @@ public class ApplicationFunctions {
 
         if(result < 1) System.out.println(Lang.INSERTION_FAILED);
         else System.out.println(Lang.INSERTION_SUCCESS);
-
-        return null;
     };
     public static SQLFunction addCatalogEntry = (conn, input) -> {
 
@@ -141,12 +133,12 @@ public class ApplicationFunctions {
             UI.subprompt(Lang.ENTER_SID);
             sid = input.nextLine().toUpperCase();
 
-            if(sid.equals("!")) return null;
+            if(sid.equals("!")) return;
             
             UI.subprompt(Lang.ENTER_PID);
             pid = input.nextLine().toUpperCase();
 
-            if(pid.equals("!")) return null;
+            if(pid.equals("!")) return;
 
             if(st.executeQuery(SQLQueries.selectFromWhereColsEqVals("sid", "catalog", new String[]{"sid", "pid"}, new String[]{sid, pid})).next()){
                 System.out.println(Lang.SID_PID_EXISTS);
@@ -158,7 +150,7 @@ public class ApplicationFunctions {
             UI.subprompt(Lang.ENTER_PCOST);
             pcost = input.nextLine();
 
-            if(pcost.equals("!")) return null;
+            if(pcost.equals("!")) return;
             if(pcost.length() > 0) break;
         }
 
@@ -166,8 +158,6 @@ public class ApplicationFunctions {
 
         if(result < 1) System.out.println(Lang.INSERTION_FAILED);
         else System.out.println(Lang.INSERTION_SUCCESS);
-
-        return null;
     };
 
     public static SQLFunction deletePart = (conn, input) -> {
@@ -180,7 +170,7 @@ public class ApplicationFunctions {
         while(true){
             UI.subprompt(Lang.ENTER_PID);
             pid = input.nextLine().toUpperCase();
-            if(pid.equals("!")) return null;
+            if(pid.equals("!")) return;
             if(!st.executeQuery(SQLQueries.selectFromWhereColEqVal("pid", "parts", "pid", pid)).next()){
                 System.out.println(Lang.PID_NOT_EXISTS);
                 continue;
@@ -189,13 +179,11 @@ public class ApplicationFunctions {
         }
         
         System.out.println(Lang.CONFIRM_INPUT);
-        if(input.nextLine().toLowerCase().charAt(0) != 'y') return null;
+        if(input.nextLine().toLowerCase().charAt(0) != 'y') return;
 
         int result = st.executeUpdate(SQLQueries.deleteFromWhereColEqVal("parts", "pid", pid));
         if(result < 1) System.out.println(Lang.DELETION_FAILED);
         else System.out.println(Lang.DELETION_SUCCESS);
-
-        return null;
     };
     public static SQLFunction deleteSupplier = (conn, input) -> {
         Statement st = conn.createStatement();
@@ -207,7 +195,7 @@ public class ApplicationFunctions {
         while(true){
             UI.subprompt(Lang.ENTER_SID);
             sid = input.nextLine().toUpperCase();
-            if(sid.equals("!")) return null;
+            if(sid.equals("!")) return;
             if(!st.executeQuery(SQLQueries.selectFromWhereColEqVal("sid", "suppliers", "sid", sid)).next()){
                 System.out.println(Lang.SID_NOT_EXISTS);
                 continue;
@@ -216,13 +204,11 @@ public class ApplicationFunctions {
         }
         
         System.out.println(Lang.CONFIRM_INPUT);
-        if(input.nextLine().toLowerCase().charAt(0) != 'y') return null;
+        if(input.nextLine().toLowerCase().charAt(0) != 'y') return;
 
         int result = st.executeUpdate(SQLQueries.deleteFromWhereColEqVal("suppliers", "sid", sid));
         if(result < 1) System.out.println(Lang.DELETION_FAILED);
         else System.out.println(Lang.DELETION_SUCCESS);
-
-        return null;
     };
     public static SQLFunction deleteCatalogEntry = (conn, input) -> {
         Statement st = conn.createStatement();
@@ -236,12 +222,12 @@ public class ApplicationFunctions {
             UI.subprompt(Lang.ENTER_SID);
             sid = input.nextLine().toUpperCase();
 
-            if(sid.equals("!")) return null;
+            if(sid.equals("!")) return;
             
             UI.subprompt(Lang.ENTER_PID);
             pid = input.nextLine().toUpperCase();
 
-            if(pid.equals("!")) return null;
+            if(pid.equals("!")) return;
             
             if(!st.executeQuery(SQLQueries.selectFromWhereColsEqVals("sid", "catalog", new String[]{"sid", "pid"}, new String[]{sid, pid})).next()){
                 System.out.println(Lang.SID_PID_NOT_EXISTS);
@@ -251,12 +237,111 @@ public class ApplicationFunctions {
         }
         
         System.out.println(Lang.CONFIRM_INPUT);
-        if(input.nextLine().toLowerCase().charAt(0) != 'y') return null;
+        if(input.nextLine().toLowerCase().charAt(0) != 'y') return;
 
         int result = st.executeUpdate(SQLQueries.deleteFromWhereColsEqVals("catalog", new String[]{"sid", "pid"}, new String[]{sid, pid}));
         if(result < 1) System.out.println(Lang.DELETION_FAILED);
         else System.out.println(Lang.DELETION_SUCCESS);
+    };
 
-        return null;
+    public static SQLFunction updateCatalogEntry = (conn, input) -> {
+        
+        Statement st = conn.createStatement();
+
+        String sid = "";
+        String pid = "";
+        String pcost = "";
+        
+        System.out.println(Lang.UPD_CATALOG_ENTRY);
+
+        while(true){
+            UI.subprompt(Lang.ENTER_SID);
+            sid = input.nextLine().toUpperCase();
+
+            if(sid.equals("!")) return;
+            
+            UI.subprompt(Lang.ENTER_PID);
+            pid = input.nextLine().toUpperCase();
+
+            if(pid.equals("!")) return;
+
+            if(!st.executeQuery(SQLQueries.selectFromWhereColsEqVals("sid", "catalog", new String[]{"sid", "pid"}, new String[]{sid, pid})).next()){
+                System.out.println(Lang.SID_PID_NOT_EXISTS);
+                continue;
+            }
+            if(sid.length() > 0 && pid.length() > 0) break;
+        }
+        while(true){
+            UI.subprompt(Lang.ENTER_NEW_PCOST);
+            pcost = input.nextLine();
+
+            if(pcost.equals("!")) return;
+            if(pcost.length() > 0) break;
+        }
+
+        int result = st.executeUpdate(SQLQueries.updateSetToValWhereColsEqVals("catalog", "cost", pcost, new String[]{"sid","pid"}, new String[]{sid, pid}));
+
+        if(result < 1) System.out.println(Lang.INSERTION_FAILED);
+        else System.out.println(Lang.INSERTION_SUCCESS);
+    };
+
+    public static SQLFunction queryPartSuppliers = (conn, input) -> {
+        
+        Statement st = conn.createStatement();
+
+        String pid = "";
+
+        while(true){
+            UI.subprompt(Lang.ENTER_PID);
+            pid = input.nextLine().toUpperCase();
+            if(pid.equals("!")) return;
+            
+            if(!st.executeQuery(SQLQueries.selectFromWhereColEqVal("pid","parts","pid",pid)).next()){
+                System.out.println(Lang.PID_NOT_EXISTS);
+                continue;
+            }
+
+            if(pid.length() > 0) break;
+        }
+
+        //SELECT sid, sname, phone, cost FROM parts JOIN catalog USING (pid) JOIN suppliers USING (sid) WHERE pid='input'
+        
+        ResultSet result = st.executeQuery(SQLQueries.selectFromWhereColEqVal("sid, sname, phone, cost", SQLQueries.joinUsing(SQLQueries.joinUsing("parts", "catalog", "pid"), "suppliers", "sid"), "pid", pid));
+        ResultSetMetaData resMeta = result.getMetaData();
+
+        System.out.println(String.format("%-10s %-30s %-15s %-10s", resMeta.getColumnLabel(1), resMeta.getColumnLabel(2), resMeta.getColumnLabel(3), resMeta.getColumnLabel(4)));
+        while(result.next()){
+            System.out.println(String.format("%-10s %-30s %-15s %10.2f", result.getString(1), result.getString(2), result.getString(3), result.getFloat(4)));
+        }
+    };
+    public static SQLFunction queryCheapestPartSupplier = (conn, input) -> {
+        
+        Statement st = conn.createStatement();
+
+        String pid = "";
+
+        while(true){
+            UI.subprompt(Lang.ENTER_PID);
+            pid = input.nextLine().toUpperCase();
+            if(pid.equals("!")) return;
+            
+            if(!st.executeQuery(SQLQueries.selectFromWhereColEqVal("pid","parts","pid",pid)).next()){
+                System.out.println(Lang.PID_NOT_EXISTS);
+                continue;
+            }
+
+            if(pid.length() > 0) break;
+        }
+
+        ResultSet cheapestPrice = st.executeQuery(SQLQueries.selectFromWhereColEqVal("MIN(cost)","catalog","pid",pid));
+        cheapestPrice.next();
+        float cost = cheapestPrice.getFloat(1);
+        ResultSet result = st.executeQuery(SQLQueries.selectFromWhereColsEqVals("sid, sname, phone, cost", SQLQueries.joinUsing(SQLQueries.joinUsing("parts", "catalog", "pid"), "suppliers", "sid"), new String[]{"pid", "cost"}, new String[]{pid, ""+cost}));
+        ResultSetMetaData resMeta = result.getMetaData();
+
+        System.out.println(String.format("%-10s %-30s %-15s %-10s", resMeta.getColumnLabel(1), resMeta.getColumnLabel(2), resMeta.getColumnLabel(3), resMeta.getColumnLabel(4)));
+        while(result.next()){
+            System.out.println(String.format("%-10s %-30s %-15s %10.2f", result.getString(1), result.getString(2), result.getString(3), result.getFloat(4)));
+        }
     };
 }

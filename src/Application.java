@@ -35,22 +35,22 @@ public class Application {
         printWelcome();
         ApplicationCommand command;
 
-        ResultSet result = null;
-
         while(true){
 
             command = interpretUserInput();
+
             if(command == ApplicationCommand.EXIT_APPLICATION) return 0;
+            else if(command == ApplicationCommand.HELP_MESSAGE){
+                printHelp();
+                continue;
+            }
 
             try{
-                result = command.func.doOperation(this.conn, this.userInput);
+                command.func.doOperation(this.conn, this.userInput);
             }
             catch(SQLException e){
                 System.out.println("SQL Failure " + e.getErrorCode() + ": " + e);
                 System.out.println(e.getSQLState());
-            }
-
-            if(result != null){
             }
 
         }
@@ -64,60 +64,73 @@ public class Application {
     }
     private ApplicationCommand interpretUserInput(){
         String[] input;
+        ApplicationCommand command = null;
         while(true){
-            System.out.print(Lang.PROMPT);
+
+            UI.prompt();
+
             input = userInput.nextLine().split(" ");
-            switch(input[0]){
+
+            command = switch(input[0]){
+
                 case "help" -> {
                     printHelp();
-                    continue;
+                    yield ApplicationCommand.HELP_MESSAGE;
                 }
                 case "list" -> {
-                    if(input.length < 2) break;
+                    if(input.length < 2) yield null;
                     switch(input[1]){
-                        case "parts": return ApplicationCommand.LIST_PART;
-                        case "suppliers": return ApplicationCommand.LIST_SUPPLIER;
-                        case "catalog": return ApplicationCommand.LIST_CATALOG_ENTRY;
-                        default:
+                        case "parts": yield ApplicationCommand.LIST_PART;
+                        case "suppliers": yield ApplicationCommand.LIST_SUPPLIER;
+                        case "catalog": yield ApplicationCommand.LIST_CATALOG_ENTRY;
+                        default: yield null;
                     }
                 }
                 case "add" -> {
-                    if(input.length < 2) break;
+                    if(input.length < 2) yield null;
                     switch(input[1]){
-                        case "part": return ApplicationCommand.ADD_PART;
-                        case "supplier": return ApplicationCommand.ADD_SUPPLIER;
-                        case "catalog": return ApplicationCommand.ADD_CATALOG_ENTRY;
-                        default:
+                        case "part": yield ApplicationCommand.ADD_PART;
+                        case "supplier": yield ApplicationCommand.ADD_SUPPLIER;
+                        case "catalog": yield ApplicationCommand.ADD_CATALOG_ENTRY;
+                        default: yield null;
                     }
                 }
                 case "del" -> {
-                    if(input.length < 2) break;
+                    if(input.length < 2) yield null;
                     switch(input[1]){
-                        case "part": return ApplicationCommand.DEL_PART;
-                        case "supplier": return ApplicationCommand.DEL_SUPPLIER;
-                        case "catalog": return ApplicationCommand.DEL_CATALOG_ENTRY;
-                        default:
+                        case "part": yield ApplicationCommand.DEL_PART;
+                        case "supplier": yield ApplicationCommand.DEL_SUPPLIER;
+                        case "catalog": yield ApplicationCommand.DEL_CATALOG_ENTRY;
+                        default: yield null;
                     }
                 }
                 case "update" -> {
-                    if(input.length < 2) break;
-
+                    if(input.length < 2) yield null;
+                    switch(input[1]){
+                        case "cost": yield ApplicationCommand.UPD_CATALOG_ENTRY;
+                        default: yield null;
+                    }
                 }
                 case "query" -> {
-                    if(input.length < 2) break;
-
-
+                    if(input.length < 2) yield null;
+                    switch(input[1]) {
+                        case "part": yield ApplicationCommand.QUERY_PART;
+                        case "supplier":
+                        case "cheapest": yield ApplicationCommand.QUERY_CHEAPEST;
+                        default:  yield null;
+                    }
                 }
                 case "exit" -> {
                     System.out.println(Lang.GOODBYE_MSG);
-                    return ApplicationCommand.EXIT_APPLICATION;
+                    yield ApplicationCommand.EXIT_APPLICATION;
                 }
-                case "" -> {
-                    continue;
+                default -> {
+                    yield null; 
                 }
-                default -> {}
-            }
-            System.out.println(Lang.INVALID_INPUT);
+            };
+
+            if(command != null) return command;
+            else System.out.println(Lang.INVALID_INPUT);
         }
     }
     

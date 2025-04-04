@@ -2,7 +2,7 @@ public class Lang {
     public static final String WELCOME = """
         \nPetroff Parts and Supplies
             Database Solution
-            v.0.1.0
+            v0.1.3
 
         enter 'help' for commands
         """;
@@ -18,9 +18,11 @@ public class Lang {
     |   del [option]        Delete existing [option]:                          |
     |                           "part" or "supplier" or "catalog" (entry)      |
     |   update [option]     Update existing [option]:                          |
-    |                           "part or "supplier" or "catalog" (entry)       |
+    |                           "cost" (of part)                               |
     |   query [option]      Get info about [option]:                           |
-    |                           "part" or "supplier"                           |
+    |                           "part" (all suppliers of a part)               |
+    |                           "supplier" (all parts provided by a supplier)  |
+    |                           "cheapest" (cheapest supplier of a part)       |
     |   help                Show this menu                                     |
     |   exit                Exit the program                                   |
     |                                                                          |
@@ -34,10 +36,12 @@ public class Lang {
     public static final String DEL_PART = "Deleting part... (cancel with '!')";
     public static final String DEL_SUPPLIER = "Deleting supplier... (cancel with '!')";
     public static final String DEL_CATALOG_ENTRY = "Deleting catalog entry... (cancel with '!')";
+    public static final String UPD_CATALOG_ENTRY = "Updating existing catalog entry... (cancel with '!')";
     public static final String ENTER_PID = "Enter Part ID:";
     public static final String ENTER_PNAME = "Enter Part Name:";
     public static final String ENTER_PMANF = "Enter Part Manufacturer:";
     public static final String ENTER_PCOST = "Enter Part Cost:";
+    public static final String ENTER_NEW_PCOST = "Enter New Cost for Part:";
     public static final String ENTER_SID = "Enter Supplier ID:";
     public static final String ENTER_SNAME = "Enter Supplier Name:";
     public static final String ENTER_SPHONE = "Enter Supplier Phone Number:";
