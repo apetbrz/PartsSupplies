@@ -1,6 +1,10 @@
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
+/* SQLQueries:
+ * a collection of helper functions to handle making SQL queries
+ * messy, but does sanitize inputs (as if that matters here lol)
+ */
 public class SQLQueries {
 
     public static String selectAll(String from){
@@ -75,8 +79,8 @@ public class SQLQueries {
         return table1 + " JOIN " + table2 + " USING (" + col + ")";
     }
 
-    //prevent SQL injection attacks by escaping single quotes
+    //prevent SQL injection attacks by escaping single quotes and comments
     private static String sanitizeInput(String str){
-        return str.replace("'","\\'");
+        return str.replace("'","\\'").replace("--","\\-\\-");
     }
 }

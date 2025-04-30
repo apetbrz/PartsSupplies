@@ -1,8 +1,14 @@
+/* UI:
+ * handles presentation for user input
+ */
+
 public class UI {
     public static void prompt(){
+        System.out.println();
         System.out.print(Lang.PROMPT);
     }
     public static void prompt(String msg){
+        System.out.println();
         System.out.println(msg);
         prompt();
     }

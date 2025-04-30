@@ -2,10 +2,11 @@ public class Main {
 
     public static void main(String[] args) {
         
-        //edit this:
+        //****** edit this: ******
         String url = "jdbc:mysql://localhost/partsandsuppliers";
         String username = "root";
         String password = "password";
+        //************************
 
         Application app = new Application(url, username, password);
 

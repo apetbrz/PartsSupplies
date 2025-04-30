@@ -1,9 +1,15 @@
+
+/* ApplicationCommmand: an enum of all valid commands/operations
+ * each command/operation has a function tied to it, that is ran
+ * when the command is called for
+ */
+
 public enum ApplicationCommand {
     
     EXIT_APPLICATION(null),
     HELP_MESSAGE(null),
-    LIST_PART(ApplicationFunctions.listPart),
-    LIST_SUPPLIER(ApplicationFunctions.listSuppliers),
+    LIST_PARTS(ApplicationFunctions.listParts),
+    LIST_SUPPLIERS(ApplicationFunctions.listSuppliers),
     LIST_CATALOG_ENTRY(ApplicationFunctions.listCatalogEntries),
     ADD_PART(ApplicationFunctions.addPart),
     ADD_SUPPLIER(ApplicationFunctions.addSupplier),

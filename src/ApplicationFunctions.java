@@ -1,12 +1,19 @@
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.stream.Stream;
 
+/* ApplicationFunctions
+ * has all the functions that handle SQL operations.
+ * TODO: this could be more thoroughly commented
+ */
 public class ApplicationFunctions {
     
-    public static SQLFunction listPart = (conn, input) -> {
+    /*TODO: replace all println() -> while(result.next()) println() blocks with 
+     * printSqlColumnNames() and printSqlResults() with string format constants
+    */
+
+    //listPart(): get all parts from parts table
+    public static SQLFunction listParts = (conn, input) -> {
         Statement st = conn.createStatement();
         ResultSet result = st.executeQuery(SQLQueries.selectAll("parts"));
         ResultSetMetaData resMeta = result.getMetaData();
@@ -16,6 +23,8 @@ public class ApplicationFunctions {
             System.out.println(String.format("%-10s %-30s %-30s", result.getString(1), result.getString(2), result.getString(3)));
         }
     };
+
+    //listSuppliers(): get all suppliers from suppliers table
     public static SQLFunction listSuppliers = (conn, input) -> {
         Statement st = conn.createStatement();
         ResultSet result = st.executeQuery(SQLQueries.selectAll("suppliers"));
@@ -26,6 +35,8 @@ public class ApplicationFunctions {
             System.out.println(String.format("%-10s %-30s %-15s", result.getString(1), result.getString(2), result.getString(3)));
         }
     };
+
+    //listCatalogEntries(): get all catalog entries from catalog table
     public static SQLFunction listCatalogEntries = (conn, input) -> {
         Statement st = conn.createStatement();
         ResultSet result = st.executeQuery(SQLQueries.selectAll("catalog"));
@@ -37,6 +48,7 @@ public class ApplicationFunctions {
         }
     };
 
+    //addPart(): add a part to the parts table
     public static SQLFunction addPart = (conn, input) -> {
 
         Statement st = conn.createStatement();
@@ -78,6 +90,8 @@ public class ApplicationFunctions {
         if(result < 1) System.out.println(Lang.INSERTION_FAILED);
         else System.out.println(Lang.INSERTION_SUCCESS);
     };
+
+    //addSupplier(): add a supplier to the suppliers table
     public static SQLFunction addSupplier = (conn, input) -> {
         
         Statement st = conn.createStatement();
@@ -93,7 +107,7 @@ public class ApplicationFunctions {
             sid = input.nextLine().toUpperCase();
 
             if(sid.equals("!")) return;
-            if(st.executeQuery(SQLQueries.selectFromWhereColEqVal("sid", "parts", "sid", sid)).next()){
+            if(st.executeQuery(SQLQueries.selectFromWhereColEqVal("sid", "suppliers", "sid", sid)).next()){
                 System.out.println(Lang.SID_EXISTS);
                 continue;
             }
@@ -114,11 +128,13 @@ public class ApplicationFunctions {
             if(sphone.length() > 0) break;
         }
 
-        int result = st.executeUpdate(SQLQueries.insertValuesInto("parts", new String[]{sid, sname, sphone}));
+        int result = st.executeUpdate(SQLQueries.insertValuesInto("suppliers", new String[]{sid, sname, sphone}));
 
         if(result < 1) System.out.println(Lang.INSERTION_FAILED);
         else System.out.println(Lang.INSERTION_SUCCESS);
     };
+
+    //addCatalogEntry(): add a catalog entry to the catalog table
     public static SQLFunction addCatalogEntry = (conn, input) -> {
 
         Statement st = conn.createStatement();
@@ -159,7 +175,8 @@ public class ApplicationFunctions {
         if(result < 1) System.out.println(Lang.INSERTION_FAILED);
         else System.out.println(Lang.INSERTION_SUCCESS);
     };
-
+    
+    //deletePart(): delete an existing part from the parts table
     public static SQLFunction deletePart = (conn, input) -> {
         Statement st = conn.createStatement();
 
@@ -185,6 +202,8 @@ public class ApplicationFunctions {
         if(result < 1) System.out.println(Lang.DELETION_FAILED);
         else System.out.println(Lang.DELETION_SUCCESS);
     };
+    
+    //deleteSupplier(): delete an exising supplier from the suppliers table
     public static SQLFunction deleteSupplier = (conn, input) -> {
         Statement st = conn.createStatement();
 
@@ -210,6 +229,8 @@ public class ApplicationFunctions {
         if(result < 1) System.out.println(Lang.DELETION_FAILED);
         else System.out.println(Lang.DELETION_SUCCESS);
     };
+    
+    //deleteCatalogEntry(): delete an existing catalog entry from the catalog table
     public static SQLFunction deleteCatalogEntry = (conn, input) -> {
         Statement st = conn.createStatement();
 
@@ -244,6 +265,7 @@ public class ApplicationFunctions {
         else System.out.println(Lang.DELETION_SUCCESS);
     };
 
+    //updateCatalogEntry(): update an existing catalog entry in the catalog table (change cost of a part at a supplier)
     public static SQLFunction updateCatalogEntry = (conn, input) -> {
         
         Statement st = conn.createStatement();
@@ -284,7 +306,8 @@ public class ApplicationFunctions {
         if(result < 1) System.out.println(Lang.INSERTION_FAILED);
         else System.out.println(Lang.INSERTION_SUCCESS);
     };
-
+    
+    //queryPartSuppliers(): get all suppliers of a given part
     public static SQLFunction queryPartSuppliers = (conn, input) -> {
         
         Statement st = conn.createStatement();
@@ -314,6 +337,8 @@ public class ApplicationFunctions {
             System.out.println(String.format("%-10s %-30s %-15s %10.2f", result.getString(1), result.getString(2), result.getString(3), result.getFloat(4)));
         }
     };
+    
+    //queryCheapestPartSupplier(): get cost/supplier of part that is the cheapest for that part
     public static SQLFunction queryCheapestPartSupplier = (conn, input) -> {
         
         Statement st = conn.createStatement();

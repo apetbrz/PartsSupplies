@@ -4,8 +4,7 @@ public class Lang {
             Database Solution
             v0.1.3
 
-        enter 'help' for commands
-        """;
+        enter 'help' for commands""";
     public static final String HELP_MSG = """
     .--------------------------------------------------------------------------.
     |                                                                          |
@@ -61,5 +60,7 @@ public class Lang {
     public static final String SID_PID_NOT_EXISTS = "This Supplier ID doesn't supply this Part ID!";
     public static final String INSERTION_FAILED = "Insertion failed! No changes made.";
     public static final String DELETION_FAILED = "Deletion failed! No changes made.";
+
+    public static final String FATAL_ERROR = "Uh oh, an error occurred! Please send this info to your developers:";
 
 }
